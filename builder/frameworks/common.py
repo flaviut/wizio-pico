@@ -4,10 +4,11 @@
 
 from os.path import join as pjoin
 
+from SCons.Builder import Builder
 from colorama import Fore
 
+from pico import fix_old_new_stdio, add_sdk
 from picoprobe_upload import picoprobe_upload
-from pico import *
 from uf2conv import dev_uploader
 
 bynary_type_info = []
@@ -150,7 +151,7 @@ def dev_compiler(env, application_name="APPLICATION"):
         BUILDERS=dict(
             ElfToBin=Builder(
                 action=env.VerboseAction(
-                    " ".pjoin(
+                    " ".join(
                         [
                             "$OBJCOPY",
                             "-O",
