@@ -16,7 +16,7 @@ def dev_init(env, platform):
     env.Append(
         CPPDEFINES=["BAREMETAL"],
         CPPPATH=[
-            join(env.framework_dir, env.sdk, "boards"),
+            pjoin(env.framework_dir, env.sdk, "boards"),
         ],
     )
     dev_finalize(env)

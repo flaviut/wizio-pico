@@ -2,9 +2,7 @@
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
-from os.path import join
-from SCons.Script import DefaultEnvironment, Builder
-from platformio.builder.tools.piolib import PlatformIOLibBuilder
+from os.path import join as pjoin
 
 
 # SDK >= 1.2 : LIB_PICO_STDIO_FOO
@@ -29,11 +27,11 @@ def fix_old_new_stdio(env):
 
 def add_ops(env):
     tab = "  *"
-    OBJ_DIR = join("$BUILD_DIR", env.platform, env.sdk, "pico")
-    LIB_DIR = join(env.framework_dir, env.sdk, "pico")
+    OBJ_DIR = pjoin("$BUILD_DIR", env.platform, env.sdk, "pico")
+    LIB_DIR = pjoin(env.framework_dir, env.sdk, "pico")
     if "PICO_DOUBLE_SUPPORT_ROM_V1" in env.get("CPPDEFINES"):
         print(tab, "PICO_DOUBLE_SUPPORT_ROM_V1")
-        env.BuildSources(join(OBJ_DIR, "pico_double"), join(LIB_DIR, "pico_double"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_double"), pjoin(LIB_DIR, "pico_double"))
         env.Append(
             LINKFLAGS=[
                 "-Wl,-wrap,__aeabi_dadd",
@@ -102,7 +100,7 @@ def add_ops(env):
 
     if "PICO_FLOAT_SUPPORT_ROM_V1" in env.get("CPPDEFINES"):
         print(tab, "PICO_FLOAT_SUPPORT_ROM_V1")
-        env.BuildSources(join(OBJ_DIR, "pico_float"), join(LIB_DIR, "pico_float"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_float"), pjoin(LIB_DIR, "pico_float"))
         env.Append(
             LINKFLAGS=[
                 "-Wl,-wrap,__aeabi_fadd",
@@ -171,7 +169,7 @@ def add_ops(env):
 
     if "PICO_DIVIDER_HARDWARE" in env.get("CPPDEFINES"):
         print(tab, "PICO_DIVIDER_HARDWARE")
-        env.BuildSources(join(OBJ_DIR, "pico_divider"), join(LIB_DIR, "pico_divider"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_divider"), pjoin(LIB_DIR, "pico_divider"))
         env.Append(
             LINKFLAGS=[
                 "-Wl,-wrap,__aeabi_idiv",
@@ -186,7 +184,7 @@ def add_ops(env):
     if "PICO_INT64_OPS_PICO" in env.get("CPPDEFINES"):
         print(tab, "PICO_INT64_OPS_PICO")
         env.BuildSources(
-            join(OBJ_DIR, "pico_int64_ops"), join(LIB_DIR, "pico_int64_ops")
+            pjoin(OBJ_DIR, "pico_int64_ops"), pjoin(LIB_DIR, "pico_int64_ops")
         )
         env.Append(
             LINKFLAGS=[
@@ -196,7 +194,7 @@ def add_ops(env):
 
     if "PICO_BIT_OPS_PICO" in env.get("CPPDEFINES"):
         print(tab, "PICO_BIT_OPS_PICO")
-        env.BuildSources(join(OBJ_DIR, "pico_bit_ops"), join(LIB_DIR, "pico_bit_ops"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_bit_ops"), pjoin(LIB_DIR, "pico_bit_ops"))
         env.Append(
             LINKFLAGS=[
                 "-Wl,-wrap,__clzsi2",
@@ -215,7 +213,7 @@ def add_ops(env):
 
     if "PICO_MEM_OPS_PICO" in env.get("CPPDEFINES"):
         print(tab, "PICO_MEM_OPS_PICO")
-        env.BuildSources(join(OBJ_DIR, "pico_mem_ops"), join(LIB_DIR, "pico_mem_ops"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_mem_ops"), pjoin(LIB_DIR, "pico_mem_ops"))
         env.Append(
             LINKFLAGS=[
                 "-Wl,-wrap,memcpy",
@@ -234,7 +232,7 @@ def add_ops(env):
 
     if "PICO_PRINTF_PICO" in env.get("CPPDEFINES"):
         print(tab, "PICO_PRINTF_PICO")
-        env.BuildSources(join(OBJ_DIR, "pico_printf"), join(LIB_DIR, "pico_printf"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_printf"), pjoin(LIB_DIR, "pico_printf"))
         env.Append(
             LINKFLAGS=[
                 "-Wl,-wrap,sprintf",
@@ -252,25 +250,25 @@ def add_ops(env):
         or "PICO_STDIO_UART" in env.get("CPPDEFINES")
         or "PICO_STDIO_SEMIHOSTING" in env.get("CPPDEFINES")
     ):
-        env.BuildSources(join(OBJ_DIR, "pico_stdio"), join(LIB_DIR, "pico_stdio"))
+        env.BuildSources(pjoin(OBJ_DIR, "pico_stdio"), pjoin(LIB_DIR, "pico_stdio"))
 
     if "PICO_STDIO_USB" in env.get("CPPDEFINES"):
         print(tab, "* STDIO USB")
         env.BuildSources(
-            join(OBJ_DIR, "pico_stdio_usb"), join(LIB_DIR, "pico_stdio_usb")
+            pjoin(OBJ_DIR, "pico_stdio_usb"), pjoin(LIB_DIR, "pico_stdio_usb")
         )
 
     if "PICO_STDIO_UART" in env.get("CPPDEFINES"):
         print(tab, "* STDIO UART")
         env.BuildSources(
-            join(OBJ_DIR, "pico_stdio_uart"), join(LIB_DIR, "pico_stdio_uart")
+            pjoin(OBJ_DIR, "pico_stdio_uart"), pjoin(LIB_DIR, "pico_stdio_uart")
         )
 
     if "PICO_STDIO_SEMIHOSTING" in env.get("CPPDEFINES"):
         print(tab, "* STDIO SEMIHOSTING")
         env.BuildSources(
-            join(OBJ_DIR, "pico_stdio_semihosting"),
-            join(LIB_DIR, "pico_stdio_semihosting"),
+            pjoin(OBJ_DIR, "pico_stdio_semihosting"),
+            pjoin(LIB_DIR, "pico_stdio_semihosting"),
         )
 
     env.Append(
@@ -283,8 +281,8 @@ def add_ops(env):
 
 
 def add_tinyusb(env):
-    OBJ_DIR = join("$BUILD_DIR", env.platform, env.sdk, "pico", "usb")
-    USB_DIR = join(env.framework_dir, env.sdk, "lib", "tinyusb", "src")
+    OBJ_DIR = pjoin("$BUILD_DIR", env.platform, env.sdk, "pico", "usb")
+    USB_DIR = pjoin(env.framework_dir, env.sdk, "lib", "tinyusb", "src")
     for define in env.get("CPPDEFINES"):
         if "_USB" in define:
             env.Append(
@@ -341,7 +339,7 @@ def add_sdk(env):
         pico_malloc + "<pico/pico_malloc>",
     ]
     env.BuildSources(
-        join("$BUILD_DIR", env.platform, env.sdk),
-        join(env.framework_dir, env.sdk),
+        pjoin("$BUILD_DIR", env.platform, env.sdk),
+        pjoin(env.framework_dir, env.sdk),
         src_filter=filter,
     )

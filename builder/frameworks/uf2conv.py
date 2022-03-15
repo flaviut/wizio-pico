@@ -402,7 +402,7 @@ def dev_uploader(target, source, env):
     bin_name = join(env.get("BUILD_DIR"), env.get("PROGNAME")) + ".bin"
     uf2_name = join(env.get("BUILD_DIR"), env.get("PROGNAME")) + ".uf2"
     drive = env.get("UPLOAD_PORT")
-    if None != env.GetProjectOption("monitor_port"):
+    if env.GetProjectOption("monitor_port") is not None:
         try:  # reset usb stdio
             usb = serial.Serial(env.GetProjectOption("monitor_port"), 1200)
             time.sleep(0.1)
@@ -416,11 +416,9 @@ def dev_uploader(target, source, env):
     with open(bin_name, mode="rb") as f:
         inpbuf = f.read()
     outbuf = convert_to_uf2(inpbuf)
-    time.sleep(0.1)
     write_file(uf2_name, outbuf)  # write uf2 to build folder
     drives = get_drives()
     if len(drives) == 0:
-        # raise RuntimeError("Pico USB drive not found.")
         print("\033[1;37;41m                               ")
         print("\033[1;37;41m   Pico USB drive not found.   ")
         print("\033[1;37;41m                               ")

@@ -2,15 +2,12 @@
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
-import os
-from os.path import join
-from SCons.Script import DefaultEnvironment, Builder
 from common import *
 
 
 def dev_create_asm(target, source, env):
-    py = join(env.framework_dir, env.sdk, "boot_stage2", "pad_checksum")
-    dir = join(env["BUILD_DIR"], env["PROGNAME"])
+    py = pjoin(env.framework_dir, env.sdk, "boot_stage2", "pad_checksum")
+    dir = pjoin(env["BUILD_DIR"], env["PROGNAME"])
     env.Execute("python " + py + " -s 0xffffffff " + dir + ".bin " + dir + ".S")
     f = open(dir + ".S", "a")
     f.write('\n#include "../link.S')
@@ -50,10 +47,10 @@ def dev_init(env, platform):
         ASFLAGS=[env.cortex, "-x", "assembler-with-cpp"],
         CPPDEFINES=["PICO_FLASH_SPI_CLKDIV=2"],
         CPPPATH=[
-            join("$PROJECT_DIR", "include"),
-            join(env.framework_dir, env.sdk, "include"),
-            join(env.framework_dir, env.sdk, "boards"),
-            join(env.framework_dir, env.sdk, "boot_stage2", "asminclude"),
+            pjoin("$PROJECT_DIR", "include"),
+            pjoin(env.framework_dir, env.sdk, "include"),
+            pjoin(env.framework_dir, env.sdk, "boards"),
+            pjoin(env.framework_dir, env.sdk, "boot_stage2", "asminclude"),
         ],
         CFLAGS=[
             env.cortex,
@@ -74,7 +71,7 @@ def dev_init(env, platform):
             "--entry=_stage2_boot",
         ],
         LDSCRIPT_PATH=[
-            join(env.framework_dir, env.sdk, "boot_stage2", "boot_stage2.ld")
+            pjoin(env.framework_dir, env.sdk, "boot_stage2", "boot_stage2.ld")
         ],
         BUILDERS=dict(
             ElfToBin=Builder(
@@ -102,11 +99,11 @@ def dev_init(env, platform):
     # Select file, Clean, Upload, Get boot2.S from build folder
 
     env.BuildSources(
-        join("$BUILD_DIR", "BOOT2"),
-        join(env.framework_dir, env.sdk, "boot_stage2"),
+        pjoin("$BUILD_DIR", "BOOT2"),
+        pjoin(env.framework_dir, env.sdk, "boot_stage2"),
         src_filter="-<*> +<boot2_w25q080.S>",
     )  # is default
-    # env.BuildSources(join("$BUILD_DIR", "BOOT2"), join(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_w25x10cl.S>")
-    # env.BuildSources(join("$BUILD_DIR", "BOOT2"), join(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_is25lp080.S>")
-    # env.BuildSources(join("$BUILD_DIR", "BOOT2"), join(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_generic_03h.S>")
-    # env.BuildSources(join("$BUILD_DIR", "BOOT2"), join(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_usb_blinky.S>")
+    # env.BuildSources(pjoin("$BUILD_DIR", "BOOT2"), pjoin(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_w25x10cl.S>")
+    # env.BuildSources(pjoin("$BUILD_DIR", "BOOT2"), pjoin(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_is25lp080.S>")
+    # env.BuildSources(pjoin("$BUILD_DIR", "BOOT2"), pjoin(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_generic_03h.S>")
+    # env.BuildSources(pjoin("$BUILD_DIR", "BOOT2"), pjoin(env.framework_dir, env.sdk, "boot_stage2"), src_filter="-<*> +<boot2_usb_blinky.S>")

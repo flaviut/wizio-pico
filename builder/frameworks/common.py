@@ -2,77 +2,30 @@
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
-import os
-from os.path import join, normpath, basename
-from shutil import copyfile
+from os.path import join as pjoin
+
 from colorama import Fore
+
 from pico import *
 from uf2conv import dev_uploader
-from SCons.Script import DefaultEnvironment, Builder, ARGUMENTS
 
 bynary_type_info = []
 
 
-def do_copy(src, dst, name):
-    if False == os.path.isfile(join(dst, name)):
-        copyfile(join(src, name), join(dst, name))
-
-
-def do_mkdir(path, name):
-    dir = join(path, name)
-    if False == os.path.isdir(dir):
-        try:
-            os.mkdir(dir)
-        except OSError:
-            print("[ERROR] Creation of the directory %s failed" % dir)
-            exit(1)
-    return dir
-
-
-def ini_file(env):
-    ini = join(env.subst("$PROJECT_DIR"), "platformio.ini")
+def dev_create_template(env):
+    ini = pjoin(env.subst("$PROJECT_DIR"), "platformio.ini")
     f = open(ini, "r")
     txt = f.read()
     f.close()
-    f = open(ini, "a+")
-    if "monitor_port" not in txt:
-        f.write("\n;monitor_port = SERIAL_PORT\n")
-    if "monitor_speed" not in txt:
-        f.write(";monitor_speed = 115200\n")
-    if "build_flags" not in txt:
-        f.write("\n;build_flags = \n")
-    if "lib_deps" not in txt:
-        f.write("\n;lib_deps = \n")
-    f.close()
-
-
-def dev_create_template(env):
-    ini_file(env)
-    src = join(env.PioPlatform().get_package_dir("framework-wizio-pico"), "templates")
-    dst = do_mkdir(env.subst("$PROJECT_DIR"), "include")
-
-    if "freertos" in env.GetProjectOption("lib_deps", []) or "USE_FREERTOS" in env.get(
-        "CPPDEFINES"
-    ):
-        do_copy(src, dst, "FreeRTOSConfig.h")
-
-    if "VFS" in env.GetProjectOption("lib_deps", []) or "USE_VFS" in env.get(
-        "CPPDEFINES"
-    ):
-        do_copy(src, dst, "vfs_config.h")
-
-    if "APPLICATION" == env.get("PROGNAME"):
-        if "fatfs" in env.GetProjectOption("lib_deps", []):
-            do_copy(src, dst, "ffconf.h")
-        dst = do_mkdir(env.subst("$PROJECT_DIR"), join("include", "pico"))
-        do_copy(src, dst, "config_autogen.h")
-        dst = join(env.subst("$PROJECT_DIR"), "src")
-        if False == os.path.isfile(join(dst, "main.cpp")):
-            do_copy(src, dst, "main.c")
-
-    if "BOOT-2" == env.get("PROGNAME"):
-        dst = do_mkdir(env.subst("$PROJECT_DIR"), join("include", "pico"))
-        do_copy(src, dst, "config_autogen.h")
+    with open(ini, "a+") as f:
+        if "monitor_port" not in txt:
+            f.write("\n;monitor_port = SERIAL_PORT\n")
+        if "monitor_speed" not in txt:
+            f.write(";monitor_speed = 115200\n")
+        if "build_flags" not in txt:
+            f.write("\n;build_flags = \n")
+        if "lib_deps" not in txt:
+            f.write("\n;lib_deps = \n")
 
 
 def dev_nano(env):
@@ -133,13 +86,13 @@ def dev_compiler(env, application_name="APPLICATION"):
     env.Append(
         ASFLAGS=[cortex, "-x", "assembler-with-cpp"],
         CPPPATH=[
-            join("$PROJECT_DIR", "src"),
-            join("$PROJECT_DIR", "lib"),
-            join("$PROJECT_DIR", "include"),
-            join(env.framework_dir, "wizio", "pico"),
-            join(env.framework_dir, "wizio", "newlib"),
-            join(env.framework_dir, env.sdk, "include"),
-            join(env.framework_dir, env.sdk, "cmsis", "include"),  #
+            pjoin("$PROJECT_DIR", "src"),
+            pjoin("$PROJECT_DIR", "lib"),
+            pjoin("$PROJECT_DIR", "include"),
+            pjoin(env.framework_dir, "wizio", "pico"),
+            pjoin(env.framework_dir, "wizio", "newlib"),
+            pjoin(env.framework_dir, env.sdk, "include"),
+            pjoin(env.framework_dir, env.sdk, "cmsis", "include"),  #
         ],
         CPPDEFINES=[
             "NDEBUG",
@@ -189,14 +142,14 @@ def dev_compiler(env, application_name="APPLICATION"):
             dev_nano(env),
         ],
         LIBSOURCE_DIRS=[
-            join(env.framework_dir, "library"),
+            pjoin(env.framework_dir, "library"),
         ],
-        LIBPATH=[join(env.framework_dir, "library"), join("$PROJECT_DIR", "lib")],
+        LIBPATH=[pjoin(env.framework_dir, "library"), pjoin("$PROJECT_DIR", "lib")],
         LIBS=["m", "gcc"],
         BUILDERS=dict(
             ElfToBin=Builder(
                 action=env.VerboseAction(
-                    " ".join(
+                    " ".pjoin(
                         [
                             "$OBJCOPY",
                             "-O",
@@ -219,7 +172,7 @@ def add_libraries(env):  # is PIO LIB-s
         "CPPDEFINES"
     ):
         env.Append(
-            CPPPATH=[join(join(env.framework_dir, "library", "freertos"), "include")]
+            CPPPATH=[pjoin(pjoin(env.framework_dir, "library", "freertos"), "include")]
         )
         print("  * RTOS         : FreeRTOS")
         if "USE_FREERTOS" not in env.get("CPPDEFINES"):
@@ -237,8 +190,8 @@ def add_boot(env):
         boot = boot.replace("$PROJECT_DIR", env["PROJECT_DIR"]).replace("\\", "/")
     bynary_type_info.append(boot)
     env.BuildSources(
-        join("$BUILD_DIR", env.platform, "wizio", "boot"),
-        join(env.framework_dir, "boot", boot),
+        pjoin("$BUILD_DIR", env.platform, "wizio", "boot"),
+        pjoin(env.framework_dir, "boot", boot),
     )
 
 
@@ -275,7 +228,7 @@ def add_bynary_type(env):
         if "empty" == linker:
             linker = "memmap_default.ld"
     env.Append(
-        LDSCRIPT_PATH=join(
+        LDSCRIPT_PATH=pjoin(
             env.framework_dir, env.sdk, "pico", "pico_standard_link", linker
         )
     )
@@ -288,7 +241,7 @@ def add_bynary_type(env):
 def dev_finalize(env):
     # WIZIO
     env.BuildSources(
-        join("$BUILD_DIR", env.platform, "wizio"), join(env.framework_dir, "wizio")
+        pjoin("$BUILD_DIR", env.platform, "wizio"), pjoin(env.framework_dir, "wizio")
     )
     # SDK
     add_bynary_type(env)

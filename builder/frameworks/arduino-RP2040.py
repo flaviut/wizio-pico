@@ -2,8 +2,6 @@
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
-from os.path import join
-from SCons.Script import DefaultEnvironment, Builder
 from common import *
 
 
@@ -15,19 +13,21 @@ def dev_init(env, platform):
     dev_create_template(env)
     core = env.BoardConfig().get("build.core")
     variant = env.BoardConfig().get("build.variant")
-    PLATFORM_DIR = join(env.framework_dir, platform)
+    PLATFORM_DIR = pjoin(env.framework_dir, platform)
     env.Append(
         CPPDEFINES=["ARDUINO=200"],
         CPPPATH=[
-            join(PLATFORM_DIR, platform),
-            join(PLATFORM_DIR, "cores", core),
-            join(PLATFORM_DIR, "variants", variant),
+            pjoin(PLATFORM_DIR, platform),
+            pjoin(PLATFORM_DIR, "cores", core),
+            pjoin(PLATFORM_DIR, "variants", variant),
         ],
-        LIBSOURCE_DIRS=[join(PLATFORM_DIR, "libraries", core)],
-        LIBPATH=[join(PLATFORM_DIR, "libraries", core)],
+        LIBSOURCE_DIRS=[pjoin(PLATFORM_DIR, "libraries", core)],
+        LIBPATH=[pjoin(PLATFORM_DIR, "libraries", core)],
     )
-    OBJ_DIR = join("$BUILD_DIR", platform, "arduino")
-    env.BuildSources(join(OBJ_DIR, "arduino"), join(PLATFORM_DIR, platform))
-    env.BuildSources(join(OBJ_DIR, "core"), join(PLATFORM_DIR, "cores", core))
-    env.BuildSources(join(OBJ_DIR, "variant"), join(PLATFORM_DIR, "variants", variant))
+    OBJ_DIR = pjoin("$BUILD_DIR", platform, "arduino")
+    env.BuildSources(pjoin(OBJ_DIR, "arduino"), pjoin(PLATFORM_DIR, platform))
+    env.BuildSources(pjoin(OBJ_DIR, "core"), pjoin(PLATFORM_DIR, "cores", core))
+    env.BuildSources(
+        pjoin(OBJ_DIR, "variant"), pjoin(PLATFORM_DIR, "variants", variant)
+    )
     dev_finalize(env)

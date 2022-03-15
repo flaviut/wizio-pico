@@ -2,14 +2,15 @@
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
-from platformio.managers.platform import PlatformBase
-import os, platform, copy
+import copy
+import platform
 from os.path import join
-from platform import system, machine
+
+from platformio.managers.platform import PlatformBase
 
 
 def get_system():
-    sys_dir = system() + "_" + machine()
+    sys_dir = platform.system() + "_" + platform.machine()
     sys_dir = sys_dir.lower()
     if "windows" in sys_dir:
         sys_dir = "windows"
