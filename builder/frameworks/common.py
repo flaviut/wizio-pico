@@ -6,6 +6,7 @@ from os.path import join as pjoin
 
 from colorama import Fore
 
+from picoprobe_upload import picoprobe_upload
 from pico import *
 from uf2conv import dev_uploader
 
@@ -163,7 +164,9 @@ def dev_compiler(env, application_name="APPLICATION"):
                 suffix=".bin",
             )
         ),
-        UPLOADCMD=dev_uploader,
+        UPLOADCMD=picoprobe_upload
+        if env.GetProjectOption("upload_protocol") == "picoprobe"
+        else dev_uploader,
     )
 
 
