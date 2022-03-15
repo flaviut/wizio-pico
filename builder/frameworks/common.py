@@ -8,8 +8,6 @@ from SCons.Builder import Builder
 from colorama import Fore
 
 from pico import fix_old_new_stdio, add_sdk
-from picoprobe_upload import picoprobe_upload
-from uf2conv import dev_uploader
 
 bynary_type_info = []
 
@@ -165,9 +163,6 @@ def dev_compiler(env, application_name="APPLICATION"):
                 suffix=".bin",
             )
         ),
-        UPLOADCMD=picoprobe_upload
-        if env.GetProjectOption("upload_protocol") == "picoprobe"
-        else dev_uploader,
     )
 
 

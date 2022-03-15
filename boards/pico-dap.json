@@ -1,24 +1,41 @@
 {
-  "name": "WizIO - Raspberry Pi Pico ( CMSIS-DAP )",
-  "url": "https://github.com",
-  "vendor": "Raspberry Pi",  
-  "frameworks": [ "baremetal", "arduino" ],
-
+  "name": "Raspberry Pi Pico",
+  "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
+  "vendor": "Raspberry Pi",
+  "frameworks": [
+    "baremetal",
+    "arduino"
+  ],
   "build": {
-    "core"      : "RP2040",
-    "variant"   : "raspberry-pi-pico",    
-    "f_cpu"     : "125000000L",
-    "mcu"       : "RP2040"
+    "core": "RP2040",
+    "cpu": "cortex-m0plus",
+    "variant": "raspberry-pi-pico",
+    "f_cpu": "133000000L",
+    "hwids": [
+      [
+        "0x2E8A",
+        "0x00C0"
+      ]
+    ],
+    "mcu": "RP2040"
   },
-
   "debug": {
-    "openocd_target" : "rp2040-core0.cfg",
-    "svd_path"       : "rp2040.svd"
-  },  
-
+    "openocd_target": "rp2040-core0.cfg",
+    "svd_path": "rp2040.svd"
+  },
   "upload": {
-    "maximum_ram_size" :  262144,
-    "maximum_size"     : 2097152, 
-    "protocol"         : "uf2"        
+    "maximum_ram_size": 262144,
+    "maximum_size": 2097152,
+    "require_upload_port": true,
+    "native_usb": true,
+    "use_1200bps_touch": true,
+    "wait_for_upload_port": false,
+    "protocol": "picotool",
+    "protocols": [
+      "cmsis-dap",
+      "raspberrypi-swd",
+      "picoprobe",
+      "picotool"
+    ]
   }
 }

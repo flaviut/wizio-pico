@@ -3,9 +3,16 @@
   "url": "https://github.com",
   "build": {
     "core": "pico",
-    "variant": "pico",    
+    "cpu": "cortex-m0plus",
+    "variant": "pico",
     "uploader": "pico-none",
     "f_cpu": "133000000L",
+    "hwids": [
+      [
+        "0x2E8A",
+        "0x00C0"
+      ]
+    ],
     "mcu": "RP2040"
   },
   "debug": {
@@ -17,11 +24,13 @@
         "server": {}
       }
     }
-  },  
-  "frameworks": ["boot2"],
+  },
+  "frameworks": [
+    "boot2"
+  ],
   "vendor": "WizIO",
   "upload": {
-        "maximum_ram_size":  262144,
-        "maximum_size"    : 2097152
+    "maximum_ram_size": 262144,
+    "maximum_size": 2097152
   }
 }

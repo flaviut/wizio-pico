@@ -40,15 +40,20 @@
         "type": "toolchain",
         "version": "~1.70201.0"
     },
-    "tool-wizio-pico": {
-        "type": "uploader",
-        "version": "https://github.com/Wiz-IO/tool-wizio-pico.git"
-    }, 
-    "tool-pico-openocd": {
+    "tool-rp2040tools": {
+      "type": "uploader",
+      "owner": "platformio",
+      "version": "~1.0.2"
+    },
+    "tool-openocd-raspberrypi": {
+      "type": "uploader",
       "optional": true,
-      "type": "debugger",
-      "version": "https://github.com/Wiz-IO/tool-pico-openocd"
-    } 
-
+      "owner": "platformio",
+      "version": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/1.3.3-a/x86_64-linux-gnu.openocd-e3428fadb.220212.tar.gz"
+    },
+    "tool-wizio-pico": {
+      "type": "uploader",
+      "version": "https://github.com/Wiz-IO/tool-wizio-pico.git"
+    }
   }
 }
