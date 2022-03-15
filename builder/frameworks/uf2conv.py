@@ -218,8 +218,8 @@ def to_str(b):
     return b.decode("utf-8")
 
 
-def get_drives():
-    drives = []
+def get_drives(default_drives=None):
+    drives = default_drives if default_drives else []
     if sys.platform == "win32":
         r = subprocess.check_output(
             [
@@ -401,7 +401,6 @@ def dev_uploader(target, source, env):
     appstartaddr = int(env.address, 0)
     bin_name = join(env.get("BUILD_DIR"), env.get("PROGNAME")) + ".bin"
     uf2_name = join(env.get("BUILD_DIR"), env.get("PROGNAME")) + ".uf2"
-    drive = env.get("UPLOAD_PORT")
     if env.GetProjectOption("monitor_port") is not None:
         try:  # reset usb stdio
             usb = serial.Serial(env.GetProjectOption("monitor_port"), 1200)
@@ -412,18 +411,14 @@ def dev_uploader(target, source, env):
         time.sleep(1.0)  # Windows - AutoPlay
         if "Windows" not in system():
             time.sleep(1.0)
-    print("  Converting to UF2 ( 0x%x )" % (appstartaddr))
+    print(f"  Converting to UF2 ( 0x{appstartaddr:x} )")
     with open(bin_name, mode="rb") as f:
-        inpbuf = f.read()
-    outbuf = convert_to_uf2(inpbuf)
+        outbuf = convert_to_uf2(f.read())
     write_file(uf2_name, outbuf)  # write uf2 to build folder
-    drives = get_drives()
+    drives = get_drives([env.get("UPLOAD_PORT", None)])
     if len(drives) == 0:
-        print("\033[1;37;41m                               ")
-        print("\033[1;37;41m   Pico USB drive not found.   ")
-        print("\033[1;37;41m                               ")
-        return
+        raise Exception("Pico USB drive not found.")
     for d in drives:
         print("Flashing %s (%s)" % (d, board_id(d)))
-        write_file(d + "/" + env.get("PROGNAME") + ".uf2", outbuf)  # write ufs to pico
+        write_file(os.path.join(d, env.get("PROGNAME") + ".uf2"), outbuf)  # write ufs to pico
     time.sleep(1.0)  # usb-serial driver up
