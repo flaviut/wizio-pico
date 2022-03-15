@@ -174,6 +174,7 @@ elif upload_protocol in debug_tools:
         UPLOADCMD="$UPLOADER $UPLOADERFLAGS",
     )
     upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
+    upload_source = target_elf
 
 # custom upload tool
 elif upload_protocol == "custom":

@@ -40,31 +40,13 @@ def dev_nano(env):
     return nano
 
 
-def dev_compiler(env, application_name="APPLICATION"):
+def dev_compiler(env):
     env.sdk = env.BoardConfig().get("build.sdk", "SDK")  # get/set default SDK
     print()
     print(
         Fore.BLUE
         + "%s RASPBERRYPI PI PICO RP2040 ( PICO - %s )"
         % (env.platform.upper(), env.sdk.upper())
-    )
-    env.Replace(
-        BUILD_DIR=env.subst("$BUILD_DIR").replace("\\", "/"),
-        AR="arm-none-eabi-ar",
-        AS="arm-none-eabi-as",
-        CC="arm-none-eabi-gcc",
-        GDB="arm-none-eabi-gdb",
-        CXX="arm-none-eabi-g++",
-        OBJCOPY="arm-none-eabi-objcopy",
-        RANLIB="arm-none-eabi-ranlib",
-        SIZETOOL="arm-none-eabi-size",
-        ARFLAGS=["rc"],
-        SIZEPROGREGEXP=r"^(?:\.text|\.data|\.boot2|\.rodata)\s+(\d+).*",
-        SIZEDATAREGEXP=r"^(?:\.data|\.bss|\.ram_vector_table)\s+(\d+).*",
-        SIZECHECKCMD="$SIZETOOL -A -d $SOURCES",
-        SIZEPRINTCMD="$SIZETOOL --mcu=$BOARD_MCU -C -d $SOURCES",
-        PROGSUFFIX=".elf",
-        PROGNAME=application_name,
     )
     cortex = ["-march=armv6-m", "-mcpu=cortex-m0plus", "-mthumb"]
     env.heap_size = env.BoardConfig().get("build.heap", "2048")
