@@ -17,7 +17,7 @@ from SCons.Script import (
 )
 from platformio.util import get_serial_ports
 
-from pioasm import dev_pioasm
+from wizio_pioasm import dev_pioasm
 
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
