@@ -3,14 +3,30 @@
 #   https://github.com/Wiz-IO/wizio-pico
 
 from os.path import join as pjoin
+import os
 
 from SCons.Builder import Builder
 from colorama import Fore
 
-from pico import fix_old_new_stdio, add_sdk
+from pico import add_sdk
 
 bynary_type_info = []
 
+def do_copy(src, dst, name):
+    file_name = pjoin(dst, name)
+    if False == os.path.isfile( file_name ):
+        copyfile( pjoin(src, name), file_name )
+    return file_name
+
+def do_mkdir(path, name):
+    dir = pjoin(path, name)
+    if False == os.path.isdir( dir ):
+        try:
+            os.mkdir(dir)
+        except OSError:
+            print ("[ERROR] Creation of the directory %s failed" % dir)
+            exit(1)
+    return dir
 
 def dev_create_template(env): # add defaut keys
     ini = pjoin( env.subst("$PROJECT_DIR"), "platformio.ini" )
@@ -231,5 +247,64 @@ def dev_finalize(env):
     add_bynary_type(env)
     add_sdk(env)
     env.Append(LIBS=env.libs)
-    dev_add_modules(env)
-    print()
+
+def dev_config_board(env):
+    src = pjoin(env.PioPlatform().get_package_dir("framework-wizio-pico"), "templates")
+    dst = do_mkdir( env.subst("$PROJECT_DIR"), "include" )
+
+    if False == env.wifi:
+        print("  * WIFI         : NO")
+        return
+    ### pico w board
+    else:
+        do_copy(src, dst, "lwipopts.h") # for user edit
+
+        env.Append(
+            CPPDEFINES = [ "PICO_W", 'CYW43_SPI_PIO', 'CYW43_USE_SPI' ],
+            CPPPATH = [
+                pjoin( env.framework_dir, env.sdk, "lib", "lwip", "src", "include" ),
+                pjoin( env.framework_dir, env.sdk, "lib", "cyw43-driver", "src" ),
+                pjoin( env.framework_dir, env.sdk, "lib", "cyw43-driver", "firmware" ),
+            ],
+        )
+
+        ### pico wifi support
+        env.BuildSources(
+            pjoin( "$BUILD_DIR", "wifi", "pico" ),
+            pjoin(env.framework_dir, env.sdk),
+            [ "-<*>", "+<pico/pico_cyw43_arch>", "+<pico/pico_lwip>", ]
+        )
+
+        ### wifi spi driver & firmware
+        env.BuildSources(
+            pjoin( "$BUILD_DIR", "wifi" , "cyw43-driver" ),
+            pjoin( env.framework_dir, env.sdk, "lib", "cyw43-driver", "src" ),
+            [ "+<*>", "-<cyw43_sdio.c>", ] # remove sdio driver
+        )
+
+        ### LWIP: for add other files, use PRE:SCRIPT.PY
+        env.BuildSources(
+            pjoin( "$BUILD_DIR", env.platform, "lwip", "api" ),
+            pjoin( env.framework_dir, env.sdk, "lib", "lwip", "src", "api" ),
+        )
+        env.BuildSources(
+            pjoin( "$BUILD_DIR", env.platform, "lwip", "core" ),
+            pjoin( env.framework_dir, env.sdk, "lib", "lwip", "src", "core" ),
+            [ "+<*>",  "-<ipv6>", ] # remove ipv6
+        )
+        env.BuildSources(
+            pjoin( "$BUILD_DIR", env.platform, "lwip", "netif" ),
+            pjoin( env.framework_dir, env.sdk, "lib", "lwip", "src", "netif" ),
+            [ "-<*>", "+<ethernet.c>", ]
+        )
+
+        ### use pre-compiled wifi_firmware.o
+        print( "  * WIFI         : Firmware Object" )
+        env.Append( LINKFLAGS = [ pjoin( env.framework_dir, env.sdk, "lib", "cyw43-driver", "src", "wifi_firmware.o" ) ] )
+        return
+        ### use pre-compiled libwifi_firmware.a
+        print( "  * WIFI         : Firmware Library" )
+        env.Append( # AS LIB
+            LIBPATH = [ pjoin( env.framework_dir, env.sdk, "lib", "cyw43-driver", "src" ) ],
+            LIBS = ['wifi_firmware']
+        )
