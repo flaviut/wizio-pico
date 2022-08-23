@@ -1,18 +1,20 @@
 ## Raspberry Pi Pico RP2040 - PlatformIO ( Pico-SDK & Arduino )
 
 **A few words in the beginning**
-* **Version: 1.0.9** The project is a work in progress, there may be bugs...
+* [**Due to Raspberry Pi Pico Team's bad attitude towards the project**](https://github.com/Wiz-IO/wizio-pico/wiki#a-lyrical-digression) <br>
+**I won't work hard or maybe I won't update fast<br><br>**
+* **Version: 1.1.1** The project is a work in progress, there may be bugs...
 * [Look here, if there is something new](https://github.com/Wiz-IO/wizio-pico/wiki#last-news) 
 * This project is based on [**PICO-SDK**](https://github.com/raspberrypi/pico-sdk)
 * **PICO-SDK** _( the file organization has been restructured to be flexible and have a fast compilation )_
-* * ver 1.2.0 release ( **default** ) 
-* * _ATT: some #define keys is renamed to LIB_PICO_foo. Please read Pico SDK documentation or ask in PI forum_
+* * **default SDK 1.4.0** ( backup  1.3.1 ) 
+* * Support and Pico W ( WiFi ) board - not tested
 * **Frameworks**
 * * Baremetal ( pico-sdk, C/C++ ) _baremetal is just a name for pico-sdk here_
 * * Arduino ( in progress... )
 * **Debug** ( in progress... )
 * * [PICOPROBE](https://github.com/Wiz-IO/wizio-pico/wiki/DEBUG#picoprobe) ( Windows for now )
-* * CMSIS-DAP [windows](https://www.youtube.com/watch?v=SdpsmgRp5Co)
+* * CMSIS-DAP [( Windows for now )](https://www.youtube.com/watch?v=SdpsmgRp5Co)
 * **Libraries** [FreeRTOS](https://github.com/Wiz-IO/wizio-pico/wiki/COMMON#freertos), FatFS, littlefs ... etc
 * Basic **[File System](https://github.com/Wiz-IO/wizio-pico/wiki/COMMON#file-system--vfs--virtual-file-system-)** ( RAM disk, FLASH disk, SD card )
 * [**READ WIKI**](https://github.com/Wiz-IO/wizio-pico/wiki/) 
@@ -21,7 +23,7 @@
 * [Arduino Examples](https://github.com/Wiz-IO/wizio-pico-examples/tree/main/arduino)
 * [Video demo - Arduino - TFT ST7789](https://www.youtube.com/watch?v=x8Z4btIwf7M)
 * **Systems support**
-* * Windows, Linux, Darwin
+* * Windows, Linux, Darwin _(if someone is editing the platform they have to take this into account)_
 
 
 **Notes**
@@ -79,7 +81,6 @@ IF **PICO_STDIO_USB** is used, the Uploader will try ro reset Pico to boot-uf2 m
 * [Timo Sandmann](https://github.com/tsandmann)
 * [Dean Blackketter](https://github.com/blackketter)
 * [Ivan Kravets ( PlatformIO )](https://platformio.org/)
-* [Comet Electronics](https://www.comet.bg/en/)
 
 ![pico](https://raw.githubusercontent.com/Wiz-IO/LIB/master/images/ILI9341.jpg)
 

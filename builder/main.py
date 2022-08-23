@@ -17,7 +17,7 @@ from SCons.Script import (
 )
 from platformio.util import get_serial_ports
 
-from wizio_pioasm import dev_pioasm
+from wpioasm import dev_pioasm # https://github.com/Wiz-IO/wizio-pico/issues/98#issuecomment-1128747885
 
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621

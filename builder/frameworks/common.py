@@ -1,4 +1,4 @@
-# WizIO 2021 Georgi Angelov
+# WizIO 2022 Georgi Angelov
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
@@ -12,8 +12,8 @@ from pico import fix_old_new_stdio, add_sdk
 bynary_type_info = []
 
 
-def dev_create_template(env):
-    ini = pjoin(env.subst("$PROJECT_DIR"), "platformio.ini")
+def dev_create_template(env): # add defaut keys
+    ini = pjoin( env.subst("$PROJECT_DIR"), "platformio.ini" )
     f = open(ini, "r")
     txt = f.read()
     f.close()
@@ -41,7 +41,10 @@ def dev_nano(env):
 
 
 def dev_compiler(env):
+    env["FRAMEWORK_DIR"] = env.framework_dir
     env.sdk = env.BoardConfig().get("build.sdk", "SDK")  # get/set default SDK
+    env.variant = env.BoardConfig().get("build.variant", 'raspberry-pi-pico')
+    env.wifi = env.BoardConfig().get("build.WIFI", False )
     print()
     print(
         Fore.BLUE
@@ -64,7 +67,7 @@ def dev_compiler(env):
     else:
         print("  * STACK        :", stack_size)
         print("  * HEAP         :", env.heap_size)
-    fix_old_new_stdio(env)
+    #fix_old_new_stdio(env)
     env.Append(
         ASFLAGS=[cortex, "-x", "assembler-with-cpp"],
         CPPPATH=[
@@ -228,4 +231,5 @@ def dev_finalize(env):
     add_bynary_type(env)
     add_sdk(env)
     env.Append(LIBS=env.libs)
+    dev_add_modules(env)
     print()

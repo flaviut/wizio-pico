@@ -1,31 +1,23 @@
-# WizIO 2021 Georgi Angelov
+# WizIO 2022 Georgi Angelov
 #   http://www.wizio.eu/
 #   https://github.com/Wiz-IO/wizio-pico
 
 from os.path import join as pjoin
 
-
-# SDK >= 1.2 : LIB_PICO_STDIO_FOO
-# SDK  < 1.2 : PICO_STDIO_FOO
-# this add both keys...
-def fix_old_new_stdio(env):
+def add_ops(env):
     if "PICO_STDIO_UART" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["LIB_PICO_STDIO_UART"])
     if "LIB_PICO_STDIO_UART" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["PICO_STDIO_UART"])
-
     if "PICO_STDIO_USB" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["LIB_PICO_STDIO_USB"])
     if "LIB_PICO_STDIO_USB" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["PICO_STDIO_USB"])
-
     if "PICO_STDIO_SEMIHOSTING" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["LIB_PICO_STDIO_SEMIHOSTING"])
     if "LIB_PICO_STDIO_SEMIHOSTING" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["PICO_STDIO_SEMIHOSTING"])
 
-
-def add_ops(env):
     tab = "  *"
     OBJ_DIR = pjoin("$BUILD_DIR", env.platform, env.sdk, "pico")
     LIB_DIR = pjoin(env.framework_dir, env.sdk, "pico")
@@ -280,6 +272,7 @@ def add_ops(env):
     )
 
 
+
 def add_tinyusb(env):
     OBJ_DIR = pjoin("$BUILD_DIR", env.platform, env.sdk, "pico", "usb")
     USB_DIR = pjoin(env.framework_dir, env.sdk, "lib", "tinyusb", "src")
@@ -313,29 +306,33 @@ def add_tinyusb(env):
 def add_sdk(env):
     add_ops(env)
     add_tinyusb(env)
+
     if "ARDUINO" != env.get("PROGNAME"):
         new_delete = "+"
         pico_malloc = "+"
     else:
         new_delete = "-"
         pico_malloc = "-"
+
     filter = [
         "+<*>",
-        "-<lib>",
-        "-<boot_stage2>",
-        "-<pico/pico_bit_ops>",
-        "-<pico/pico_divider>",
-        "-<pico/pico_int64_ops>",
-        "-<pico/pico_printf>",
-        "-<pico/pico_float>",
-        "-<pico/pico_double>",
-        "-<pico/pico_stdio>",
-        "-<pico/pico_stdio_usb>",
-        "-<pico/pico_stdio_uart>",
-        "-<pico/pico_stdio_semihosting>",
-        "-<pico/pico_mem_ops>",
-        "-<pico/pico_standard_link/crt0.S>",
-        new_delete + "<pico/pico_standard_link/new_delete.cpp>",
+            "-<lib>",
+            "-<boot_stage2>",
+            "-<pico/pico_cyw43_arch>",
+            "-<pico/pico_lwip>",
+            "-<pico/pico_bit_ops>",
+            "-<pico/pico_divider>",
+            "-<pico/pico_int64_ops>",
+            "-<pico/pico_printf>",
+            "-<pico/pico_float>",
+            "-<pico/pico_double>",
+            "-<pico/pico_stdio>",
+            "-<pico/pico_stdio_usb>",
+            "-<pico/pico_stdio_uart>",
+            "-<pico/pico_stdio_semihosting>",
+            "-<pico/pico_mem_ops>",
+            "-<pico/pico_standard_link/crt0.S>",
+            new_delete + "<pico/pico_standard_link/new_delete.cpp>",
         pico_malloc + "<pico/pico_malloc>",
     ]
     env.BuildSources(
