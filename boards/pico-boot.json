@@ -16,6 +16,7 @@
     "mcu": "RP2040"
   },
   "debug": {
+    "openocd_target" : "rp2040.cfg",
     "tools": {
       "uart": {
         "onboard": true,
