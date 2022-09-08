@@ -14,9 +14,9 @@ def add_ops(env):
     if "LIB_PICO_STDIO_USB" in env.get("CPPDEFINES"):
         env.Append(CPPDEFINES=["PICO_STDIO_USB"])
     if "PICO_STDIO_SEMIHOSTING" in env.get("CPPDEFINES"):
-        env.Append(CPPDEFINES=["LIB_PICO_STDIO_SEMIHOSTING"])
+        env.Append(CPPDEFINES=["LIB_PICO_STDIO_SEMIHOSTING", "PICO_STDIO_SEMIHOST"])
     if "LIB_PICO_STDIO_SEMIHOSTING" in env.get("CPPDEFINES"):
-        env.Append(CPPDEFINES=["PICO_STDIO_SEMIHOSTING"])
+        env.Append(CPPDEFINES=["PICO_STDIO_SEMIHOSTING", "PICO_STDIO_SEMIHOST"])
 
     tab = "  *"
     OBJ_DIR = pjoin("$BUILD_DIR", env.platform, env.sdk, "pico")
